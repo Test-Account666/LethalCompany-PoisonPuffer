@@ -23,7 +23,7 @@ public class PufferAIPatch {
             PoisonPuffer.Logger.LogDebug("Found!");
 
             // Inject code to call your method with the instantiated object as a parameter
-            var poisonPufferMethod = AccessTools.Method(typeof(PufferAIPatch), nameof(DoSomething),
+            var poisonPufferMethod = AccessTools.Method(typeof(PufferAIPatch), nameof(AddPoisonTrigger),
             [
                 typeof(GameObject),
             ]);
@@ -37,7 +37,7 @@ public class PufferAIPatch {
         return codes.AsEnumerable();
     }
 
-    public static void DoSomething(GameObject gameObject) {
+    public static void AddPoisonTrigger(GameObject gameObject) {
         PoisonPuffer.Logger.LogDebug("Found object: " + gameObject);
 
         gameObject.AddComponent<PoisonTrigger>();
