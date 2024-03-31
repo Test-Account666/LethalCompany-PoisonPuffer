@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
+using OpCodes = System.Reflection.Emit.OpCodes;
 
 namespace PoisonPuffer.Patches;
 
@@ -41,5 +41,76 @@ public class PufferAIPatch {
         PoisonPuffer.Logger.LogDebug("Found object: " + gameObject);
 
         gameObject.AddComponent<PoisonTrigger>();
+    }
+
+    [HarmonyPatch(typeof(PufferAI), "DoAIInterval")]
+    [HarmonyTranspiler]
+    public static IEnumerable<CodeInstruction> DoAIIntervalTranspiler(IEnumerable<CodeInstruction> instructions) {
+        FindPattern1(ref instructions);
+        FindPattern2(ref instructions);
+
+        return instructions;
+    }
+
+    private static void FindPattern1(ref IEnumerable<CodeInstruction> instructions) {
+        var codeInstructions = instructions.ToList();
+
+        string[] pattern = [
+            "ldloc.2 NULL", "ldc.r4 5", "bge.un Label13",
+        ];
+
+        var currentIndex = 0;
+
+        for (var index = 0; index < codeInstructions.Count(); index++) {
+            var instruction = codeInstructions[index];
+
+            if (!instruction.ToString().Equals(pattern[currentIndex])) {
+                currentIndex = 0;
+                continue;
+            }
+
+            currentIndex += 1;
+
+            if (currentIndex < 2)
+                continue;
+
+            codeInstructions[index] = new(OpCodes.Ldc_R4, 10f);
+            currentIndex = 0;
+
+            PoisonPuffer.Logger.LogDebug("Found distance!");
+        }
+
+        instructions = codeInstructions;
+    }
+
+    private static void FindPattern2(ref IEnumerable<CodeInstruction> instructions) {
+        var codeInstructions = instructions.ToList();
+
+        string[] pattern = [
+            "ldfld float PufferAI::timeSinceAlert", "ldc.r4 1.5", "ble.un Label15",
+        ];
+
+        var currentIndex = 0;
+
+        for (var index = 0; index < codeInstructions.Count(); index++) {
+            var instruction = codeInstructions[index];
+
+            if (!instruction.ToString().Equals(pattern[currentIndex])) {
+                currentIndex = 0;
+                continue;
+            }
+
+            currentIndex += 1;
+
+            if (currentIndex < 2)
+                continue;
+
+            codeInstructions[index] = new(OpCodes.Ldc_R4, .75f);
+            currentIndex = 0;
+
+            PoisonPuffer.Logger.LogDebug("Found timeSinceAlert!");
+        }
+
+        instructions = codeInstructions;
     }
 }
