@@ -34,9 +34,12 @@ public class PoisonPuffer : BaseUnityPlugin {
         coughAudioClips = [
         ];
 
+        var audioPath = Path.Combine(assemblyDirectory, "coughs");
+
+        audioPath = Directory.Exists(audioPath)? audioPath : Path.Combine(assemblyDirectory);
+
         for (var index = 1; index <= 14; index++)
-            StartCoroutine(LoadAudioClipFromFile(new(Path.Combine(assemblyDirectory, "coughs", $"cough{index}.wav")),
-                                                 $"cough{index}"));
+            StartCoroutine(LoadAudioClipFromFile(new(Path.Combine(audioPath, $"cough{index}.wav")), $"cough{index}"));
 
         Logger.LogInfo($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded!");
     }
