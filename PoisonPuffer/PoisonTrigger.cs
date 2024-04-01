@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
@@ -7,6 +8,7 @@ namespace PoisonPuffer;
 public class PoisonTrigger : MonoBehaviour {
     private readonly Random _random = new();
     private int? _instanceId;
+    private static readonly List<int> _PreviousCoughs = new(3);
 
     private void Start() {
         StartCoroutine(CheckForPlayers());
@@ -39,6 +41,16 @@ public class PoisonTrigger : MonoBehaviour {
                 }
 
                 var soundIndex = _random.Next(0, PoisonPuffer.coughAudioClips.Count);
+
+                while (_PreviousCoughs.Contains(soundIndex)) {
+                    soundIndex = _random.Next(0, PoisonPuffer.coughAudioClips.Count);
+                    yield return new WaitForEndOfFrame();
+                }
+
+                if (_PreviousCoughs.Count >= 3)
+                    _PreviousCoughs.RemoveAt(0);
+
+                _PreviousCoughs.Add(soundIndex);
 
                 var coughAudio = PoisonPuffer.coughAudioClips[soundIndex];
 
