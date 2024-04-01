@@ -34,7 +34,7 @@ public class PoisonPuffer : BaseUnityPlugin {
         coughAudioClips = [
         ];
 
-        for (var index = 1; index <= 8; index++)
+        for (var index = 1; index <= 14; index++)
             StartCoroutine(LoadAudioClipFromFile(new(Path.Combine(assemblyDirectory, "coughs", $"cough{index}.wav")),
                                                  $"cough{index}"));
 
