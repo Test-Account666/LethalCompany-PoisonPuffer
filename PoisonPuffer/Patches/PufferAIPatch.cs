@@ -17,8 +17,7 @@ public class PufferAIPatch {
         var codes = new List<CodeInstruction>(instructions);
         for (var i = 0; i < codes.Count; i++) {
             // Look for the Instantiate call
-            if (codes[i].opcode != OpCodes.Call || codes[i].operand is not MethodInfo { Name: "Instantiate" })
-                continue;
+            if (codes[i].opcode != OpCodes.Call || codes[i].operand is not MethodInfo { Name: "Instantiate" }) continue;
 
             PoisonPuffer.Logger.LogDebug("Found!");
 
@@ -46,13 +45,13 @@ public class PufferAIPatch {
     [HarmonyPatch(typeof(PufferAI), "DoAIInterval")]
     [HarmonyTranspiler]
     public static IEnumerable<CodeInstruction> DoAIIntervalTranspiler(IEnumerable<CodeInstruction> instructions) {
-        FindPattern1(ref instructions);
-        FindPattern2(ref instructions);
+        FindDistancePattern(ref instructions);
+        FindTimeSinceAlertPattern(ref instructions);
 
         return instructions;
     }
 
-    private static void FindPattern1(ref IEnumerable<CodeInstruction> instructions) {
+    private static void FindDistancePattern(ref IEnumerable<CodeInstruction> instructions) {
         var codeInstructions = instructions.ToList();
 
         string[] pattern = [
@@ -71,8 +70,7 @@ public class PufferAIPatch {
 
             currentIndex += 1;
 
-            if (currentIndex < 2)
-                continue;
+            if (currentIndex < 2) continue;
 
             codeInstructions[index] = new(OpCodes.Ldc_R4, 10f);
             currentIndex = 0;
@@ -83,7 +81,7 @@ public class PufferAIPatch {
         instructions = codeInstructions;
     }
 
-    private static void FindPattern2(ref IEnumerable<CodeInstruction> instructions) {
+    private static void FindTimeSinceAlertPattern(ref IEnumerable<CodeInstruction> instructions) {
         var codeInstructions = instructions.ToList();
 
         string[] pattern = [
@@ -102,8 +100,7 @@ public class PufferAIPatch {
 
             currentIndex += 1;
 
-            if (currentIndex < 2)
-                continue;
+            if (currentIndex < 2) continue;
 
             codeInstructions[index] = new(OpCodes.Ldc_R4, .75f);
             currentIndex = 0;
