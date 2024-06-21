@@ -7,7 +7,7 @@
         <!-- Change to whatever version you're currently on. -->
         <Version>1.1.0</Version>
         <Description>The spore lizard has evolved to be poisonous!</Description>
-        <Source>https://github.com/TheBlackEntity/LethalCompany-PoisonPuffer</Source>
+        <Source>https://github.com/TheBlackEntity/LethalCompany-PoisonPuffer/</Source>
     </PropertyGroup>
 
     <!-- Project Properties -->
@@ -53,5 +53,11 @@
 
     <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="TestAccount666.TestAccountCore">
+        <HintPath>..\dependencies\TestAccountCore.dll</HintPath>
+      </Reference>
     </ItemGroup>
 </Project>

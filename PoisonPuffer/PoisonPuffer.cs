@@ -11,6 +11,7 @@ using UnityEngine.Networking;
 
 namespace PoisonPuffer;
 
+[BepInDependency("TestAccount666.TestAccountCore", "1.1.0")]
 [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
 public class PoisonPuffer : BaseUnityPlugin {
     internal static List<AudioClip>? coughAudioClips;
