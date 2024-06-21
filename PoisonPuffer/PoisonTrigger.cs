@@ -10,6 +10,7 @@ public class PoisonTrigger : MonoBehaviour {
     private int? _instanceId;
     private static readonly List<int> _PreviousCoughs = new(3);
     private long _nextCheck;
+    private long _nextWarning;
     private bool _destroy;
 
     private void OnDestroy() => _destroy = true;
@@ -39,9 +40,23 @@ public class PoisonTrigger : MonoBehaviour {
         _nextCheck = currentTime + 500;
 
         PlayCoughAudio(currentTime);
+
+        SendPoisonWarning(currentTime);
+    }
+
+    private void SendPoisonWarning(long currentTime) {
+        if (PoisonPuffer.warningCoolDownEntry.Value <= 0) return;
+
+        if (currentTime > _nextWarning) return;
+
+        HUDManager.Instance.DisplayTip("WARNING", "Poisonous substance detected!", true);
+
+        _nextWarning = currentTime + PoisonPuffer.WarningCoolDown;
     }
 
     private void PlayCoughAudio(long currentTime) {
+        if (PoisonPuffer.CoughVolume <= 0) return;
+
         if (_instanceId is not null && FindObjectFromInstanceID(_instanceId.Value) is not null) return;
 
         var audioObject = new GameObject("TemporaryCoughAudio");
@@ -74,7 +89,7 @@ public class PoisonTrigger : MonoBehaviour {
 
         var audioSource = audioObject.AddComponent<AudioSource>();
         audioSource.clip = coughAudio;
-        audioSource.volume = 1F;
+        audioSource.volume = PoisonPuffer.CoughVolume;
         audioSource.Play();
 
         Destroy(audioObject, coughAudio.length);

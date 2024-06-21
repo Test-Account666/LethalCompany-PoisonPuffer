@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using UnityEngine;
@@ -18,10 +19,16 @@ public class PoisonPuffer : BaseUnityPlugin {
     public static PoisonPuffer Instance { get; private set; } = null!;
     internal new static ManualLogSource Logger { get; private set; } = null!;
     internal static Harmony? Harmony { get; set; }
+    internal static ConfigEntry<int> coughVolumeEntry = null!;
+    internal static float CoughVolume => coughVolumeEntry.Value / 100F;
+    internal static ConfigEntry<int> warningCoolDownEntry = null!;
+    internal static long WarningCoolDown => warningCoolDownEntry.Value * 1000;
 
     private void Awake() {
         Logger = base.Logger;
         Instance = this;
+
+        InitializeConfig();
 
         Patch();
 
@@ -43,6 +50,17 @@ public class PoisonPuffer : BaseUnityPlugin {
             StartCoroutine(LoadAudioClipFromFile(new(Path.Combine(audioPath, $"cough{index}.wav")), $"cough{index}"));
 
         Logger.LogInfo($"{MyPluginInfo.PLUGIN_GUID} v{MyPluginInfo.PLUGIN_VERSION} has loaded!");
+    }
+
+    private void InitializeConfig() {
+        coughVolumeEntry = Config.Bind("Sound", "Cough Sound Volume", 100,
+                                       new ConfigDescription("The volume for coughing sounds",
+                                                             new AcceptableValueRange<int>(0, 100)));
+
+        warningCoolDownEntry = Config.Bind("HUD", "Poison Warning Cooldown", 3,
+                                           new ConfigDescription(
+                                               "The cooldown for warning you about the poison. A cooldown of 0 disables this.",
+                                               new AcceptableValueList<int>(0, 5)));
     }
 
     internal static void Patch() {
