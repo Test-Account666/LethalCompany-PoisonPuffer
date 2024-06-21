@@ -1,5 +1,10 @@
 # Poison Puffer Mod<br>
 
+## 1.3.0<br>
+
+\+ Added volume option for cough sounds<br>
+\+ Added poison substance warning<br>
+
 ## 1.2.0<br>
 
 \+ Added TestAccountCore as dependency<br>
