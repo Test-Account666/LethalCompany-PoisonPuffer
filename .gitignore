@@ -76,7 +76,7 @@ crashlytics-build.properties
 *.sh
 
 # User added files
-ControlCompany.dll
+TestAccountCore.dll
 BuildOutput/
 
 # Build files
