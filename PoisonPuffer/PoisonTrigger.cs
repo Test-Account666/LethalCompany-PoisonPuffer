@@ -47,7 +47,7 @@ public class PoisonTrigger : MonoBehaviour {
     private void SendPoisonWarning(long currentTime) {
         if (PoisonPuffer.warningCoolDownEntry.Value <= 0) return;
 
-        if (currentTime > _nextWarning) return;
+        if (currentTime < _nextWarning) return;
 
         HUDManager.Instance.DisplayTip("WARNING", "Poisonous substance detected!", true);
 

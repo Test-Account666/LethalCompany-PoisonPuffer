@@ -60,7 +60,7 @@ public class PoisonPuffer : BaseUnityPlugin {
         warningCoolDownEntry = Config.Bind("HUD", "Poison Warning Cooldown", 3,
                                            new ConfigDescription(
                                                "The cooldown for warning you about the poison. A cooldown of 0 disables this.",
-                                               new AcceptableValueList<int>(0, 5)));
+                                               new AcceptableValueRange<int>(0, 5)));
     }
 
     internal static void Patch() {
